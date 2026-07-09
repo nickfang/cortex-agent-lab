@@ -29,3 +29,61 @@ READ_FILE_TOOL = {
       "required": ["path"],
    },
 }
+
+def list_files(subdir: str = "") -> str:
+   p = _safe_path(subdir)
+   if not p.is_dir():
+      return f"Error: no directory at {subdir!r}"
+   names = []
+   for x in sorted(p.iterdir()):
+      rel = x.relative_to(VAULT_ROOT).as_posix()
+      names.append(rel + "/" if x.is_dir() else rel)
+   return "\n".join(names)
+
+LIST_FILES_TOOL = {
+   "name": "list_files",
+   "description": "List files and folders under a vault-relative directory(default: vault root).",
+   "input_schema": {
+      "type": "object",
+      "properties": {"subdir": {"type": "string", "description": "Vault-relative directory, or '' for root"}},
+      "required": [],
+   },
+}
+
+def serach_text(query: str) -> str:
+   """Case-insensitive substring search over all.md files. Returns up to 50 hits."""
+   hits = []
+   for f in VAULT_ROOT.rglab("*.md"):
+      try:
+         for i, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
+            if query.lower() in line.lower():
+               rel = f.relative_to(VAULT_ROOT).as_posix()
+               hits.append(f"{rel}:{i}: {line.strip()}")
+               if len(hits) >=50:
+                  return "\n".join(hits)
+      except (UnicodeDecodeError, OSError):
+         continue
+   return "\n".join(hits) if hits else "No matches."
+
+SEARCH_TEXT_TOOL = {
+   "name": "search_text",
+   "description": "Case-insensitive substring search across all .md files.  Returns 'path:line: text' hits.",
+   "input_schema": {
+      "type": "object",
+      "properties": {"query": { "type": "string", "description": "Text to search for"}},
+      "required": ["query"],
+   },
+}
+
+TOOLS = [READ_FILE_TOOL, LIST_FILES_TOOL, SEARCH_TEXT_TOOL]
+
+def dispatch(name: str, tool_input: dict) -> str:
+   """Route a tool_use to the matching function."""
+   if name == "list_files":
+      return list_files(**tool_input)
+   if name == "read_file":
+      return read_file(**tool_input)
+   if name == "search_text":
+      return search_text(**tool_input)
+   return f"Error: unknown tool {name!r}"
+
