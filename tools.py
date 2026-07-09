@@ -50,7 +50,7 @@ LIST_FILES_TOOL = {
    },
 }
 
-def serach_text(query: str) -> str:
+def search_text(query: str) -> str:
    """Case-insensitive substring search over all.md files. Returns up to 50 hits."""
    hits = []
    for f in VAULT_ROOT.rglab("*.md"):
