@@ -1,6 +1,7 @@
+import os
 from pathlib import Path
 
-VAULT_ROOT = Path("/Users/nfang/Cortex").resolve()
+VAULT_ROOT = Path(os.environ.get("CORTEX_VAULT", Path.home() / "Cortex")).resolve()
 
 def _safe_path(rel: str) -> Path:
    """Resolve a vault-relative path and refuse anything that escapes the vault."""
