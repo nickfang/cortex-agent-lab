@@ -54,7 +54,7 @@ LIST_FILES_TOOL = {
 def search_text(query: str) -> str:
    """Case-insensitive substring search over all.md files. Returns up to 50 hits."""
    hits = []
-   for f in VAULT_ROOT.rglab("*.md"):
+   for f in VAULT_ROOT.rglob("*.md"):
       try:
          for i, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
             if query.lower() in line.lower():
