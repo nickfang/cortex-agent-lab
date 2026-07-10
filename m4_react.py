@@ -4,10 +4,10 @@ from tools import TOOLS, dispatch
 client = anthropic.Anthropic()
 
 SYSTEM = (
-   "You are a research assistant for a personal knowledge vault (Cortex)."
-   "Answer the user's question using ONLY what you find in the vault."
-   "Start by reading 'index.md' (the catalog), then open the specific pages it points to."
-   "Cite the file paths you drew from.  If the vault does not cover it, say so."
+   "You are a research assistant for a personal knowledge vault (Cortex). "
+   "Answer the user's question using ONLY what you find in the vault. "
+   "Start by reading 'index.md' (the catalog), then open the specific pages it points to. "
+   "Cite the file paths you drew from.  If the vault does not cover it, say so. "
 )
 
 def run_agent(question: str, max_turns: int = 12) -> str:
